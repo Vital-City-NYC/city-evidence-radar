@@ -20,7 +20,10 @@ import requests
 sys.path.insert(0, ".")
 from scanner import config as C
 
-MODEL = "claude-haiku-4-5-20251001"
+# Claude Haiku 5.5 thinks by default and its thinking counts toward max_tokens, so
+# calls run at effort "low" with a roomy cap, and replies are read by block type.
+MODEL = "claude-haiku-5-5"
+EFFORT = {"effort": "low"}
 API_URL = "https://api.anthropic.com/v1/messages"
 
 # Feeds broad enough to need a relevance keyword gate before spending API calls.
@@ -108,6 +111,13 @@ def get_api_key():
     ).decode().strip()
 
 
+def response_text(data):
+    """Joined text blocks of a Messages API reply (a reply can open with thinking blocks)."""
+    if data.get("stop_reason") == "refusal":
+        raise RuntimeError("model declined: %s" % (data.get("stop_details") or {}).get("category"))
+    return "".join(b.get("text", "") for b in data.get("content", []) if b.get("type") == "text").strip()
+
+
 def gated_out(item):
     """True if a broad-feed item clearly isn't on-topic (skip to save API spend)."""
     if item["source"] not in GATE_SOURCES:
@@ -119,7 +129,8 @@ def gated_out(item):
 def call_claude(key, item):
     body = {
         "model": MODEL,
-        "max_tokens": 900,
+        "max_tokens": 4096,
+        "output_config": EFFORT,
         "messages": [{
             "role": "user",
             "content": PROMPT.format(
@@ -133,7 +144,7 @@ def call_claude(key, item):
                "content-type": "application/json"}
     r = requests.post(API_URL, headers=headers, json=body, timeout=60)
     r.raise_for_status()
-    text = r.json()["content"][0]["text"].strip()
+    text = response_text(r.json())
     text = re.sub(r"^```(json)?|```$", "", text.strip(), flags=re.MULTILINE).strip()
     try:
         parsed = json.loads(text)
@@ -264,8 +275,8 @@ def main():
     with open("data/papers.json", "w") as f:
         json.dump(out, f, indent=2)
 
-    # rough cost estimate (Haiku 4.5: ~$1 / Mtok in, ~$5 / Mtok out)
-    cost = in_tok / 1e6 * 1.0 + out_tok / 1e6 * 5.0
+    # rough cost estimate (Haiku 5.5, prompts under 100K tokens: $0.10 / Mtok in, $0.50 / Mtok out)
+    cost = in_tok / 1e6 * 0.10 + out_tok / 1e6 * 0.50
     print(f"\n  [score] new={new} gated={gated} errors={errs} total_archive={len(papers)}")
     print(f"  [score] tokens in={in_tok} out={out_tok}  est_cost=${cost:.3f}")
 

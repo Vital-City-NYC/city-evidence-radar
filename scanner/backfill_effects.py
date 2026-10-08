@@ -30,7 +30,8 @@ ABSTRACT: {abstract}"""
 def extract(key, item):
     body = {
         "model": S.MODEL,
-        "max_tokens": 200,
+        "max_tokens": 2048,
+        "output_config": S.EFFORT,
         "messages": [{"role": "user", "content": PROMPT.format(
             title=item["title"], abstract=(item["abstract"] or "(no abstract)")[:4000])}],
     }
@@ -38,7 +39,7 @@ def extract(key, item):
                "content-type": "application/json"}
     r = requests.post(S.API_URL, headers=headers, json=body, timeout=60)
     r.raise_for_status()
-    text = r.json()["content"][0]["text"].strip()
+    text = S.response_text(r.json())
     text = re.sub(r"^```(json)?|```$", "", text, flags=re.MULTILINE).strip()
     start = text.find("{")
     return json.loads(text[start:text.rfind("}") + 1]), r.json().get("usage", {})

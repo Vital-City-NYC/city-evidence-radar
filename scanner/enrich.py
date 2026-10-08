@@ -42,7 +42,8 @@ ABSTRACT: {abstract}"""
 def enrich_one(key, p):
     body = {
         "model": S.MODEL,
-        "max_tokens": 350,
+        "max_tokens": 2048,
+        "output_config": S.EFFORT,
         "messages": [{"role": "user", "content": PROMPT.format(
             themes=C.THEME_KEYS, title=p["title"], idea=p.get("idea", ""),
             abstract=(p["abstract"] or "(no abstract)")[:4000])}],
@@ -51,7 +52,7 @@ def enrich_one(key, p):
                "content-type": "application/json"}
     r = requests.post(S.API_URL, headers=headers, json=body, timeout=60)
     r.raise_for_status()
-    t = r.json()["content"][0]["text"].strip()
+    t = S.response_text(r.json())
     t = re.sub(r"^```(json)?|```$", "", t, flags=re.MULTILINE).strip()
     return json.loads(t[t.find("{"):t.rfind("}") + 1]), r.json().get("usage", {})
 
