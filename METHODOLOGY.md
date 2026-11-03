@@ -2,7 +2,7 @@
 
 A standing scanner that vets new research — working papers, conference/preprints, and
 journal articles — for **scalable, cost-effective ideas to improve city life, with an
-emphasis on public safety**. Nothing here is a black box; this document records every
+emphasis on public safety**. This document records every
 source, filter, and calculation.
 
 ## What it does, end to end
@@ -14,7 +14,7 @@ source, filter, and calculation.
 4. **Rank** with a transparent 0–100 formula.
 5. **Publish** to the web app and **send a weekly iMessage digest** of new high-scorers.
 
-Already-scored items are cached by ID, so each weekly run only scores genuinely new
+Already-scored items are cached by ID, so each weekly run only scores new
 papers. That keeps the recurring API cost to pennies.
 
 ## Sources (all free, no-key APIs/feeds)
@@ -45,7 +45,7 @@ Health: Journal of Urban Health · American Journal of Public Health · American
 Preventive Medicine · Prevention Science · Health Affairs.
 Education: Educational Evaluation and Policy Analysis.
 
-### Known gaps (transparency)
+### Known gaps
 - **SSRN** has no open feed or API; its crime and economics work largely resurfaces via
   NBER, Crossref and SocArXiv, but coverage is not guaranteed.
 - **IZA** discussion papers and the **Cochrane Library** were tested but their feeds
@@ -71,7 +71,7 @@ from the abstract only**, not from the full paper.
 - **NYC applicability** (1–5) — how directly NYC could implement it given its agencies
   and existing programs.
 - **Underused** (1–5) — the gap between how strong the evidence is and how little the idea
-  is actually deployed or funded in big US cities. Mainstream interventions (hot-spot
+  is deployed or funded in big US cities. Mainstream interventions (hot-spot
   policing, focused deterrence, body cameras) score low; well-evidenced but neglected ideas
   score high.
 - **Novelty** (1–5) — how fresh or counterintuitive the framing is for public-safety or
