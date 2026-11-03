@@ -53,7 +53,7 @@ Education: Educational Evaluation and Policy Analysis.
 - **Brookings, MDRC, RAND, Vera Institute, Manhattan Institute and Arnold Ventures** —
   their feeds 404 or block automated access as of the last probe and are not indexed.
 
-## The four scoring dimensions
+## The seven scoring dimensions
 
 Claude reads each abstract and returns structured judgments. These are **AI estimates
 from the abstract only**, not from the full paper.
