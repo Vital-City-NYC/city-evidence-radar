@@ -1,9 +1,13 @@
 """
-Score each candidate with Claude (Haiku) on the four dimensions Josh chose:
+Score each candidate with Claude (Haiku) on seven weighted dimensions, plus a
+public-safety bonus (weights are in compute_score()):
+  - effect magnitude
   - causal strength (causal-evidence-only bar)
-  - scalability + cost-effectiveness flags
+  - scalability
+  - cost-effectiveness
   - NYC applicability
-  - public-safety weighting
+  - underused
+  - novelty
 
 Only UNSEEN items are sent to the API; previously scored items are reused from
 data/papers.json. This keeps ongoing cost to pennies per weekly run.
